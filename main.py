@@ -1,8 +1,13 @@
 import os, plistlib, time, sys, subprocess, argparse, tssUtils, fetch
 
-savePath = desktop = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop/") 
+frozen = "not"
+if getattr(sys, "frozen", False):
+    frozen = "ever so"
+    bundle_dir = sys._MEIPASS
+else:
+    bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
-def checkManifest(fileLocation, device, boardconfig, version, element):
+def checkManifest(fileLocation, device, boardconfig, version, element, savePath):
     fileName = os.path.expanduser(fileLocation)
     if os.path.exists(fileName):
         with open(fileName, 'rb') as f:
@@ -30,6 +35,10 @@ def checkManifest(fileLocation, device, boardconfig, version, element):
     return
 
 def deviceExtractionTool(binaryName, stripValue, grepValue, replace):
+    if sys.platform == "darwin":
+        command = binaryName + " | grep " + grepValue
+    if sys.platform == "win32":
+        command = binaryName + " | findstr " + grepValue
     command = binaryName + " | grep " + grepValue
     process = subprocess.Popen(command,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,encoding="utf8")
     output = process.communicate()
@@ -50,6 +59,10 @@ def dataReturn(output, error):
 
 def main():
     parser = argparse.ArgumentParser(description="FutureHelper: FutureRestore SEP, Basband and BuildManifest.plist Downloader by Kasiimh1")
+    if sys.platform == "darwin":
+        parser.add_argument("-s",help="Set Custom Save Path for Downloaded Files",default=os.path.expanduser("~/Desktop/"))
+    if sys.platform == "win32":
+        parser.add_argument("-s",  help="Set Custom Save Path for Downloaded Files",default=os.path.join(os.path.join(os.environ["USERPROFILE"]), "Desktop/" ))
     parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files", action="store_true")
     args = parser.parse_args()
 
@@ -57,12 +70,22 @@ def main():
         input("[*] Press ENTER when Device is connected > ")
         time.sleep(1)
         try:
-            udid = deviceExtractionTool("ideviceinfo", 16, "UniqueDeviceID: ", False)
-            ecid = deviceExtractionTool("ideviceinfo", 13, "UniqueChipID: ", True)
-            platform = deviceExtractionTool("ideviceinfo", 18, "HardwarePlatform: ", False)
-            product = deviceExtractionTool("ideviceinfo", 13, "ProductType: ", False)
-            user = deviceExtractionTool("ideviceinfo", 12, "DeviceName: ", False)
-            boardid = deviceExtractionTool("ideviceinfo", 15, "HardwareModel: ", False)
+            if sys.platform == "darwin":
+                #os.chdir(bundle_dir + "/darwin/")
+                udid = deviceExtractionTool("ideviceinfo", 16, "UniqueDeviceID: ", False)
+                ecid = deviceExtractionTool("ideviceinfo", 13, "UniqueChipID: ", True)
+                platform = deviceExtractionTool("ideviceinfo", 18, "HardwarePlatform: ", False)
+                product = deviceExtractionTool("ideviceinfo", 13, "ProductType: ", False)
+                user = deviceExtractionTool("ideviceinfo", 12, "DeviceName: ", False)
+                boardid = deviceExtractionTool("ideviceinfo", 15, "HardwareModel: ", False)
+            if sys.platform == "win32":
+                os.chdir(bundle_dir + "/win32/")
+                udid = deviceExtractionTool("ideviceinfo", 16, "UniqueDeviceID: ", False)
+                ecid = deviceExtractionTool("ideviceinfo", 13, "UniqueChipID: ", True)
+                platform = deviceExtractionTool("ideviceinfo", 18, "HardwarePlatform: ", False)
+                product = deviceExtractionTool("ideviceinfo", 13, "ProductType: ", False)
+                user = deviceExtractionTool("ideviceinfo", 12, "DeviceName: ", False)
+                boardid = deviceExtractionTool("ideviceinfo", 15, "HardwareModel: ", False)
 
             print("[*] Fetching Infromation From Device")
             print("-- Device Information --")
@@ -75,9 +98,9 @@ def main():
 
             for i in tssUtils.signedVersionChecker(product, False):
                 for index, element in enumerate(tssUtils.ipswGrabber(product, i, False)):
-                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], savePath + "%s/" %product + "/%s/" %i)
+                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "/%s/" %i)
                     print("-- Performing BuildManifest Lookup for %s --" %product)
-                    checkManifest(savePath + "%s/" %product + "/%s/" %i + "BuildManifest.plist", product, boardid.lower() , i, element['url'])
+                    checkManifest(args.s + "%s/" %product + "/%s/" %i + "BuildManifest.plist", product, boardid.lower() , i, element['url'], args.s)
         except:
             print("Unabled to query device info, Connect Device again and run script again!")
             sys.exit(-1)
