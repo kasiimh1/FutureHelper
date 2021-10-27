@@ -1,5 +1,4 @@
-import os, plistlib, time, sys, subprocess
-import tssUtils, fetch
+import os, plistlib, time, sys, subprocess, argparse, tssUtils, fetch
 
 savePath = desktop = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop/") 
 
@@ -50,34 +49,40 @@ def dataReturn(output, error):
     return ret
 
 def main():
+    parser = argparse.ArgumentParser(description="FutureHelper: FutureRestore SEP, Basband and BuildManifest.plist Downloader by Kasiimh1")
+    parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files", action="store_true")
+    args = parser.parse_args()
 
-    input("[*] Press ENTER when Device is connected > ")
-    time.sleep(1)
-    try:
-        udid = deviceExtractionTool("ideviceinfo", 16, "UniqueDeviceID: ", False)
-        ecid = deviceExtractionTool("ideviceinfo", 13, "UniqueChipID: ", True)
-        platform = deviceExtractionTool("ideviceinfo", 18, "HardwarePlatform: ", False)
-        product = deviceExtractionTool("ideviceinfo", 13, "ProductType: ", False)
-        user = deviceExtractionTool("ideviceinfo", 12, "DeviceName: ", False)
-        boardid = deviceExtractionTool("ideviceinfo", 15, "HardwareModel: ", False)
+    if args.d:
+        input("[*] Press ENTER when Device is connected > ")
+        time.sleep(1)
+        try:
+            udid = deviceExtractionTool("ideviceinfo", 16, "UniqueDeviceID: ", False)
+            ecid = deviceExtractionTool("ideviceinfo", 13, "UniqueChipID: ", True)
+            platform = deviceExtractionTool("ideviceinfo", 18, "HardwarePlatform: ", False)
+            product = deviceExtractionTool("ideviceinfo", 13, "ProductType: ", False)
+            user = deviceExtractionTool("ideviceinfo", 12, "DeviceName: ", False)
+            boardid = deviceExtractionTool("ideviceinfo", 15, "HardwareModel: ", False)
 
-        print("[*] Fetching Infromation From Device")
-        print("-- Device Information --")
-        print("[D] Found " + user)
-        print("[D] Device is:", product)
-        print("[D] BoardID is:", boardid)
-        print("[D] Found Device: UDID:", udid)
-        print("[D] ECID:", ecid)
-        print("[D] Device Platform:", platform)
+            print("[*] Fetching Infromation From Device")
+            print("-- Device Information --")
+            print("[D] Found " + user)
+            print("[D] Device is:", product)
+            print("[D] BoardID is:", boardid)
+            print("[D] Found Device: UDID:", udid)
+            print("[D] ECID:", ecid)
+            print("[D] Device Platform:", platform)
 
-        for i in tssUtils.signedVersionChecker(product, False):
-            for index, element in enumerate(tssUtils.ipswGrabber(product, i, False)):
-                dl = fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], savePath + "%s/" %product + "/%s/" %i)
-                print("-- Performing BuildManifest Lookup for %s --" %product)
-                checkManifest(savePath + "%s/" %product + "/%s/" %i + "BuildManifest.plist", product, boardid.lower() , i, element['url'])
-    except:
-        print("Unabled to query device info, Connect Device again and run script again!")
-        sys.exit(-1)
+            for i in tssUtils.signedVersionChecker(product, False):
+                for index, element in enumerate(tssUtils.ipswGrabber(product, i, False)):
+                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], savePath + "%s/" %product + "/%s/" %i)
+                    print("-- Performing BuildManifest Lookup for %s --" %product)
+                    checkManifest(savePath + "%s/" %product + "/%s/" %i + "BuildManifest.plist", product, boardid.lower() , i, element['url'])
+        except:
+            print("Unabled to query device info, Connect Device again and run script again!")
+            sys.exit(-1)
+    else:
+        parser.print_help()
 
 if __name__ == '__main__':
     main()

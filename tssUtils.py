@@ -1,5 +1,4 @@
-import requests, subprocess, os, csv
-import utils
+import requests, subprocess, os, csv, utils
 
 def signedVersionChecker(model, isBeta):
     URL = None
