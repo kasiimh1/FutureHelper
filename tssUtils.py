@@ -1,5 +1,5 @@
 import requests, subprocess, os, csv
-from support_files import tssUtils, utils
+import utils
 
 def signedVersionChecker(model, isBeta):
     URL = None

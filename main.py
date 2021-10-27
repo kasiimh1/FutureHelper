@@ -1,9 +1,9 @@
 import os, plistlib, time, sys, subprocess
-from support_files import tssUtils, fetch
+import tssUtils, fetch
 
 savePath = desktop = os.path.join(os.path.join(os.path.expanduser("~")), "Desktop/") 
 
-def checkManifest(fileLocation, device, boardconfig, version):
+def checkManifest(fileLocation, device, boardconfig, version, element):
     fileName = os.path.expanduser(fileLocation)
     if os.path.exists(fileName):
         with open(fileName, 'rb') as f:
@@ -15,8 +15,10 @@ def checkManifest(fileLocation, device, boardconfig, version):
                     print("[Found] %s version in BuildManifest" %i['ProductMarketingVersion'])
                     print("[Found] %s boardconfig entry in BuildManifest" %i['Info']['DeviceClass'])
                     print("[Found] SEP at path:[%s] in BuildManifest" %i['Manifest']['SEP']['Info']['Path'])
+                    fetch.downloadFileFromIPSW(element, [i['Manifest']['SEP']['Info']['Path']], savePath + "%s/" %device + "%s/" %version)
                     if 'iPhone' in device:
                         print("[Found] Baseband at path:[%s] in BuildManifest" %i['Manifest']['BasebandFirmware']['Info']['Path'])
+                        fetch.downloadFileFromIPSW(element, [i['Manifest']['BasebandFirmware']['Info']['Path']], savePath + "%s/" %device + "%s/" %version)
                     else:
                         print("[Error] %s does not use Baseband for restores!" %device)
                     return
@@ -26,7 +28,6 @@ def checkManifest(fileLocation, device, boardconfig, version):
             print("[Error] Counldn't match %s to entry in BuildManifest" %device)
     else:
         print('[Error] %s does not exist, so can\'t be read' % fileName)
-
     return
 
 def deviceExtractionTool(binaryName, stripValue, grepValue, replace):
@@ -73,7 +74,7 @@ def main():
             for index, element in enumerate(tssUtils.ipswGrabber(product, i, False)):
                 dl = fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], savePath + "%s/" %product + "/%s/" %i)
                 print("-- Performing BuildManifest Lookup for %s --" %product)
-                checkManifest(savePath + "%s/" %product + "/%s/" %i + "BuildManifest.plist", product, boardid.lower() , i)
+                checkManifest(savePath + "%s/" %product + "/%s/" %i + "BuildManifest.plist", product, boardid.lower() , i, element['url'])
     except:
         print("Unabled to query device info, Connect Device again and run script again!")
         sys.exit(-1)
