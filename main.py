@@ -103,7 +103,7 @@ def main():
                     print("-- Performing BuildManifest Lookup for %s --" %product)
                     checkManifest(args.s + "%s/" %product + "/%s/" %i + element['buildid'] + "/BuildManifest.plist", product, boardid.lower() , i, element['url'], args.s)
         except:
-            print("Unabled to query device info, Connect Device again and run script again!")
+            print("Something went wrong, Connect Device again and run script again!")
             sys.exit(-1)
     else:
         parser.print_help()
