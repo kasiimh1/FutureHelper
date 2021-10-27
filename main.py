@@ -15,14 +15,14 @@ def checkManifest(fileLocation, device, boardconfig, version, element, savePath)
         if device in pl['SupportedProductTypes']:
             print("[Found] %s in " % device + "BuildManifest")
             for i in pl['BuildIdentities']:
-                if boardconfig in i['Info']['DeviceClass']:
+                if boardconfig in i['Info']['DeviceClass']: # and version in i['ProductMarketingVersion'] 
                     print("[Found] %s version in BuildManifest" %i['ProductMarketingVersion'])
                     print("[Found] %s boardconfig entry in BuildManifest" %i['Info']['DeviceClass'])
                     print("[Found] SEP at path:[%s] in BuildManifest" %i['Manifest']['SEP']['Info']['Path'])
-                    fetch.downloadFileFromIPSW(element, [i['Manifest']['SEP']['Info']['Path']], savePath)
+                    fetch.downloadFileFromIPSW(element, [i['Manifest']['SEP']['Info']['Path']], savePath + "%s/" %device + "%s/" %version + "/" + i['Info']['BuildNumber'])
                     if 'iPhone' in device:
                         print("[Found] Baseband at path:[%s] in BuildManifest" %i['Manifest']['BasebandFirmware']['Info']['Path'])
-                        fetch.downloadFileFromIPSW(element, [i['Manifest']['BasebandFirmware']['Info']['Path']], savePath)
+                        fetch.downloadFileFromIPSW(element, [i['Manifest']['BasebandFirmware']['Info']['Path']], savePath + "%s/" %device + "%s/" %version + "/" + i['Info']['BuildNumber'])
                     else:
                         print("[Warning] %s does not use Baseband for restores!" %device)
                     return
@@ -63,7 +63,7 @@ def main():
         parser.add_argument("-s",help="Set Custom Save Path for Downloaded Files",default=os.path.expanduser("~/Desktop/"))
     if sys.platform == "win32":
         parser.add_argument("-s",  help="Set Custom Save Path for Downloaded Files",default=os.path.join(os.path.join(os.environ["USERPROFILE"]), "Desktop/" ))
-    #parser.add_argument("-b", help="Download files for signed Beta iOS versions", action="store_true")
+    # parser.add_argument("-b", help="Download files for signed Beta iOS versions", action="store_true")
     parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files", action="store_true")
     args = parser.parse_args()
 
@@ -72,6 +72,7 @@ def main():
         time.sleep(1)
         try:
             if sys.platform == "darwin":
+                #os.chdir(bundle_dir + "/darwin/")
                 udid = deviceExtractionTool("ideviceinfo", 16, "UniqueDeviceID: ", False)
                 ecid = deviceExtractionTool("ideviceinfo", 13, "UniqueChipID: ", True)
                 platform = deviceExtractionTool("ideviceinfo", 18, "HardwarePlatform: ", False)
@@ -97,11 +98,10 @@ def main():
             print("[D] Device Platform:", platform)
 
             for i in tssUtils.signedVersionChecker(product, args.b):
-                ##does not work with beta signed firmwares. returns a list of signed firmwares but doesnt req dls for the IPSWs
-                for index, element in enumerate(tssUtils.ipswGrabber(product, i, args.b)):
-                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "%s/" %i)
+                for index, element in enumerate(tssUtils.ipswGrabber(product, i, False)):
+                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "/%s/" %i + element['buildid'])
                     print("-- Performing BuildManifest Lookup for %s --" %product)
-                    checkManifest(args.s + "%s/" %product + "%s/" %i + "BuildManifest.plist", product, boardid.lower() , i, element['url'], args.s + "%s/" %product + "%s/" %i)
+                    checkManifest(args.s + "%s/" %product + "/%s/" %i + element['buildid'] + "/BuildManifest.plist", product, boardid.lower() , i, element['url'], args.s)
         except:
             print("Something went wrong, Connect Device again and run script again!")
             sys.exit(-1)
