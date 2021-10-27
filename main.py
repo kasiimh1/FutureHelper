@@ -63,7 +63,7 @@ def main():
         parser.add_argument("-s",help="Set Custom Save Path for Downloaded Files",default=os.path.expanduser("~/Desktop/"))
     if sys.platform == "win32":
         parser.add_argument("-s",  help="Set Custom Save Path for Downloaded Files",default=os.path.join(os.path.join(os.environ["USERPROFILE"]), "Desktop/" ))
-    #parser.add_argument("-b", help="Download files for signed Beta iOS versions", action="store_true")
+    parser.add_argument("-b", help="Download files for signed Beta iOS versions", action="store_true")
     parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files", action="store_true")
     args = parser.parse_args()
 
