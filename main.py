@@ -19,10 +19,10 @@ def checkManifest(fileLocation, device, boardconfig, version, element, savePath)
                     print("[Found] %s version in BuildManifest" %i['ProductMarketingVersion'])
                     print("[Found] %s boardconfig entry in BuildManifest" %i['Info']['DeviceClass'])
                     print("[Found] SEP at path:[%s] in BuildManifest" %i['Manifest']['SEP']['Info']['Path'])
-                    fetch.downloadFileFromIPSW(element, [i['Manifest']['SEP']['Info']['Path']], savePath + "%s/" %device + "%s/" %version)
+                    fetch.downloadFileFromIPSW(element, [i['Manifest']['SEP']['Info']['Path']], savePath + "%s/" %device + "%s/" %version + "/" + i['Info']['BuildNumber'])
                     if 'iPhone' in device:
                         print("[Found] Baseband at path:[%s] in BuildManifest" %i['Manifest']['BasebandFirmware']['Info']['Path'])
-                        fetch.downloadFileFromIPSW(element, [i['Manifest']['BasebandFirmware']['Info']['Path']], savePath + "%s/" %device + "%s/" %version)
+                        fetch.downloadFileFromIPSW(element, [i['Manifest']['BasebandFirmware']['Info']['Path']], savePath + "%s/" %device + "%s/" %version + "/" + i['Info']['BuildNumber'])
                     else:
                         print("[Warning] %s does not use Baseband for restores!" %device)
                     return
@@ -63,6 +63,7 @@ def main():
         parser.add_argument("-s",help="Set Custom Save Path for Downloaded Files",default=os.path.expanduser("~/Desktop/"))
     if sys.platform == "win32":
         parser.add_argument("-s",  help="Set Custom Save Path for Downloaded Files",default=os.path.join(os.path.join(os.environ["USERPROFILE"]), "Desktop/" ))
+    # parser.add_argument("-b", help="Download files for signed Beta iOS versions", action="store_true")
     parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files", action="store_true")
     args = parser.parse_args()
 
@@ -96,11 +97,11 @@ def main():
             print("[D] ECID:", ecid)
             print("[D] Device Platform:", platform)
 
-            for i in tssUtils.signedVersionChecker(product, False):
+            for i in tssUtils.signedVersionChecker(product, args.b):
                 for index, element in enumerate(tssUtils.ipswGrabber(product, i, False)):
-                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "/%s/" %i)
+                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "/%s/" %i + element['buildid'])
                     print("-- Performing BuildManifest Lookup for %s --" %product)
-                    checkManifest(args.s + "%s/" %product + "/%s/" %i + "BuildManifest.plist", product, boardid.lower() , i, element['url'], args.s)
+                    checkManifest(args.s + "%s/" %product + "/%s/" %i + element['buildid'] + "/BuildManifest.plist", product, boardid.lower() , i, element['url'], args.s)
         except:
             print("Unabled to query device info, Connect Device again and run script again!")
             sys.exit(-1)
