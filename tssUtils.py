@@ -4,10 +4,10 @@ def signedVersionChecker(model, isBeta):
     URL = None
     ipsw = []
 
-    if isBeta == True:
+    if isBeta:
         URL = "https://api.m1sta.xyz/betas/" + model
         print("\n[TSS] Using:", URL)
-    else:
+    if not isBeta:
         URL = "https://api.ipsw.me/v4/device/" + model + "?type=ipsw"
         print("\n[TSS] Using:", URL)
 
@@ -17,26 +17,25 @@ def signedVersionChecker(model, isBeta):
     if req.status_code == 200:
         req = req.json()
         print("-- Server Response --")
-        if isBeta == True:
+        if isBeta:
             for i in range(len(req)):
                 if req[i]['signed'] == True:
-                    print("[TSS] iOS:", req[i]['version'], "build:", req[i]['buildid'], "is currently being Signed for the", model)
-                    ipsw.append(req[i]['version'])
+                    print("[TSS BETA Signed] iOS:", req[i]['version'], "build:", req[i]['buildid'], "is currently being Signed for the", model)
+                    ipsw.append(req[i]['buildid'])
         else:
             for i in range(len(req["firmwares"])):
                 if req["firmwares"][i]["signed"] == True:
-                    print("[TSS] iOS:", req["firmwares"][i]["version"], "build:", req["firmwares"][i]['buildid'], "is currently being Signed for the", model)
-                    ipsw.append(req["firmwares"][i]["version"])
-        return ipsw
-        
+                    print("[TSS Signed] iOS:", req["firmwares"][i]["version"], "build:", req["firmwares"][i]['buildid'], "is currently being Signed for the", model)
+                    ipsw.append(req["firmwares"][i]["buildid"])
+    return ipsw
+     
 def ipswGrabber(model, version, isBeta):
     URL = None
-    ret = None
     ipsw = []
 
-    if isBeta == True:
+    if isBeta:
         URL = "https://api.m1sta.xyz/betas/" + model
-        print("\n[TSS] Using:", URL)
+        print("\n[TSS BETA] Using:", URL)
     else:
         URL = "https://api.ipsw.me/v4/device/" + model + "?type=ipsw"
         print("\n[TSS] Using:", URL)
@@ -47,25 +46,23 @@ def ipswGrabber(model, version, isBeta):
     if req.status_code == 200:
         req = req.json()
         print("-- Server Response --")
-        if isBeta == True:
+        if isBeta:
             try:
                 for i in range(len(req)):
-                    if req[i]['version'] == version:
+                    if req[i]['buildid'] == version:
                         ipsw.append({ "version": version, "buildid": req[i]['buildid'], "url": req[i]['url']})
-                        print("[TSS] %s iOS:" %model, req[i]['version'], "buildid:", req[i]['buildid'], "URL:", req[i]['url'])
-                        return ipsw
+                        print("[TSS BETA Download] %s iOS:" %model, req[i]['version'], "buildid:", req[i]['buildid'], "URL:", req[i]['url'])
             except:
-                ret = "No IPSW found for: %s" %model + " on: %s" %version
-        if isBeta != True:
+                return("No IPSW found for: %s" %model + " on: %s" %version)
+        if not isBeta:
             try:
                 for i in range(len(req["firmwares"])):
-                    if req["firmwares"][i]["version"] == version:
+                    if req["firmwares"][i]["buildid"] == version:
                         ipsw.append({ "version": version, "buildid": req["firmwares"][i]['buildid'], "url": req['firmwares'][i]['url']})
-                        print("[TSS] %s iOS:" %model, req["firmwares"][i]["version"], "buildid:", req["firmwares"][i]['buildid'], "URL:", req['firmwares'][i]['url'])
-                        return ipsw
+                        print("[TSS Download] %s iOS:" %model, req["firmwares"][i]["version"], "buildid:", req["firmwares"][i]['buildid'], "URL:", req['firmwares'][i]['url'])
             except:
-                print("No IPSW found for: %s" %model + " on: %s" %version)
-    return ret
+                return("No IPSW found for: %s" %model + " on: %s" %version)
+    return ipsw
 
 def requestDeviceTicket(d_id, d_ecid, d_boardid, d_ios, d_apnonce, d_save, d_ota):
     process = subprocess.Popen('tsschecker.exe --nocache -d %s' %d_id + ' -e %s' %d_ecid + ' --boardconfig %s' %d_boardid + ' --ios %s' %d_ios + ' --apnonce %s' %d_apnonce + ' -s --save-path %s' %d_save + ' %s' %d_ota, shell = True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf8')
