@@ -6,7 +6,7 @@ def downloadFileFromIPSW(URL, filenames, savepath):
         try:
             for i in filenames:
                 zip.extract(i, savepath)
-                print("Downloaded %s successfully" %i)
+                print("-- Downloaded %s successfully --" %i)
         except:
             print("File not found!")
 

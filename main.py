@@ -19,7 +19,7 @@ def checkManifest(fileLocation, device, boardconfig, version, element):
                         print("[Found] Baseband at path:[%s] in BuildManifest" %i['Manifest']['BasebandFirmware']['Info']['Path'])
                         fetch.downloadFileFromIPSW(element, [i['Manifest']['BasebandFirmware']['Info']['Path']], savePath + "%s/" %device + "%s/" %version)
                     else:
-                        print("[Error] %s does not use Baseband for restores!" %device)
+                        print("[Warning] %s does not use Baseband for restores!" %device)
                     return
             else:
                 print("[Error] BoardConfig: [%s] does not match entry in BuildManifest, check again!"%boardconfig)
