@@ -16,6 +16,10 @@ optional arguments:
 
 ### Downloads files to folder named after iPhone, iPad or iPod model e.g. (iPad7,3, iPhone11,2)
 
+### all users need to run 
+
+- ``` pip install -r requirements.txt ```
+
 ### macOS users need to install brew and libimobiledevice 
 
 #### Install brew:
