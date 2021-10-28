@@ -2,7 +2,7 @@
 
 ### Supports macOS and Windows
 
-Downloads SEP, Baseband and BuildManifest automatically for signed iOS version's
+Downloads SEP, Baseband and BuildManifest automatically for signed iOS version's for connected iDevice
 
 ```
 FutureHelper: FutureRestore SEP, Basband and BuildManifest.plist Downloader by Kasiimh1
