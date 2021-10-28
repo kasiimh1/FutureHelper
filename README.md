@@ -9,7 +9,9 @@ FutureHelper: FutureRestore SEP, Basband and BuildManifest.plist Downloader by K
 optional arguments:
   -h, --help  show this help message and exit
   -s S        Set Custom Save Path for Downloaded Files
+  -b          Download files for signed Beta iOS versions
   -d          Download SEP, Basband and BuildManifest.plist files
+  -p          Install brew.sh and libimobiledevice deps on macOS
 ```
 
 ### Uses ideviceinfo from: https://github.com/libimobiledevice/libimobiledevice

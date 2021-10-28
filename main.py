@@ -1,4 +1,6 @@
 import os, plistlib, time, sys, subprocess, argparse, tssUtils, fetch
+import os.path
+from os import path
 
 frozen = "not"
 if getattr(sys, "frozen", False):
@@ -65,7 +67,22 @@ def main():
         parser.add_argument("-s",  help="Set Custom Save Path for Downloaded Files",default=os.path.join(os.path.join(os.environ["USERPROFILE"]), "Desktop/" ))
     parser.add_argument("-b", help="Download files for signed Beta iOS versions", action="store_true")
     parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files", action="store_true")
+    parser.add_argument("-i", help="Install brew.sh and libimobiledevice deps on macOS", action="store_true")
     args = parser.parse_args()
+
+    if args.i:
+        try:
+            if not path.exists("/usr/local/bin/brew"): 
+                print("Enter password to contiune installation when requested!")
+                os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
+            else: 
+                print("brew.sh is already installed skipping....")
+            if not path.exists("/usr/local/bin/ideviceinfo"):
+                os.system("brew install libimobiledevice")
+            else:
+                print("libimobiledevice is already installed skipping....")
+        except:
+            print("Error occured when installing brew.sh and libimobiledevice")
 
     if args.d:
         input("[*] Press ENTER when Device is connected > ")
