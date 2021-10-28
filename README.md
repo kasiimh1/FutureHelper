@@ -38,7 +38,7 @@ The tool performs BuildManifest lookup for the matching SEP firmware and Baseban
 
 - ``` brew install libimobiledvice ```
 
-#### RestoreMe will be incorporated into this soon, allowing automatically downloading of files and automating futurerestore, device updates and restores outside of signing windows (if baseband and SEP are compatiable)
+#### RestoreMe will be incorporated into this soon, allowing automatically downloading of files and automating futurerestore, device updates and restores outside of signing windows (if baseband and SEP are compatible)
 
 ### Troubleshoot
 
