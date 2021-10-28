@@ -6,7 +6,7 @@ def signedVersionChecker(model, isBeta):
 
     if isBeta:
         URL = "https://api.m1sta.xyz/betas/" + model
-        print("\n[TSS] Using:", URL)
+        print("\n[TSS BETA] Using:", URL)
     if not isBeta:
         URL = "https://api.ipsw.me/v4/device/" + model + "?type=ipsw"
         print("\n[TSS] Using:", URL)
@@ -22,11 +22,15 @@ def signedVersionChecker(model, isBeta):
                 if req[i]['signed'] == True:
                     print("[TSS BETA Signed] iOS:", req[i]['version'], "build:", req[i]['buildid'], "is currently being Signed for the", model)
                     ipsw.append(req[i]['buildid'])
+                else:
+                    break
         else:
             for i in range(len(req["firmwares"])):
                 if req["firmwares"][i]["signed"] == True:
                     print("[TSS Signed] iOS:", req["firmwares"][i]["version"], "build:", req["firmwares"][i]['buildid'], "is currently being Signed for the", model)
-                    ipsw.append(req["firmwares"][i]["buildid"])
+                    ipsw.append(req["firmwares"][i]["buildid"])  
+                else:
+                    break
     return ipsw
      
 def ipswGrabber(model, version, isBeta):
@@ -42,7 +46,7 @@ def ipswGrabber(model, version, isBeta):
 
     req = requests.get(URL)
     print("-- Fetching IPSW --")
-    print("[API] Response Code: [" + str(req.status_code) + "]")
+    print("[API IPSW] Response Code: [" + str(req.status_code) + "]")
     if req.status_code == 200:
         req = req.json()
         print("-- Server Response --")

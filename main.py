@@ -56,7 +56,6 @@ def main():
             print("[D] Device Platform:", platform)
 
             for i in tssUtils.signedVersionChecker(product, args.b):
-                ##does not work with beta signed firmwares. returns a list of signed firmwares but doesnt req dls for the IPSWs
                 for index, element in enumerate(tssUtils.ipswGrabber(product, i, args.b)):
                     fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "%s/" %i)
                     print("-- Performing BuildManifest Lookup for %s --" %product)
