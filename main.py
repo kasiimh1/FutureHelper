@@ -1,13 +1,5 @@
-import os, plistlib, time, sys, subprocess, argparse, tssUtils, fetch
-import os.path
+import os, plistlib, time, sys, subprocess, argparse, tssUtils, fetch, os.path
 from os import path
-
-frozen = "not"
-if getattr(sys, "frozen", False):
-    frozen = "ever so"
-    bundle_dir = sys._MEIPASS
-else:
-    bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
 def checkManifest(fileLocation, device, boardconfig, version, element, savePath):
     fileName = os.path.expanduser(fileLocation)
