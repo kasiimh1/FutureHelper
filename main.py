@@ -2,7 +2,7 @@ import os, time, sys, argparse, tssUtils, fetch, os.path, utils
 from os import path
 
 def main():
-    parser = argparse.ArgumentParser(description="FutureHelper: FutureRestore SEP, Basband and BuildManifest.plist Downloader by Kasiimh1")
+    parser = argparse.ArgumentParser(description="FutureHelper: FutureRestore SEP, Baseband and BuildManifest.plist Downloader by Kasiimh1")
     if sys.platform == "darwin":
         parser.add_argument("-s",help="Set Custom Save Path for Downloaded Files",default=os.path.expanduser("~/Desktop/"))
     if sys.platform == "win32":

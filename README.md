@@ -5,7 +5,7 @@
 Downloads SEP, Baseband and BuildManifest automatically for signed iOS version's (including beta firmwares) for connected iDevice
 
 ```
-FutureHelper: FutureRestore SEP, Basband and BuildManifest.plist Downloader by Kasiimh1
+FutureHelper: FutureRestore SEP, Baseband and BuildManifest.plist Downloader by Kasiimh1
 optional arguments:
   -h, --help  show this help message and exit
   -s S        Set Custom Save Path for Downloaded Files
