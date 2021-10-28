@@ -10,7 +10,7 @@ optional arguments:
   -h, --help  show this help message and exit
   -s S        Set Custom Save Path for Downloaded Files
   -b          Download files for signed Beta iOS versions
-  -d          Download SEP, Basband and BuildManifest.plist files
+  -d          Download SEP, Baseband and BuildManifest.plist files
   -i          Install brew.sh and libimobiledevice deps on macOS
 ```
 
