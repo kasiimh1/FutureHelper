@@ -43,3 +43,5 @@ optional arguments:
 - Make sure device is connected and trusted both on the device and via iTunes or Finder
 
 - Does not currently support linux
+
+- Does not work for beta iOS versions, support coming soon
