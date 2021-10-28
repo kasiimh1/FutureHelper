@@ -11,7 +11,7 @@ optional arguments:
   -s S        Set Custom Save Path for Downloaded Files
   -b          Download files for signed Beta iOS versions
   -d          Download SEP, Basband and BuildManifest.plist files
-  -p          Install brew.sh and libimobiledevice deps on macOS
+  -i          Install brew.sh and libimobiledevice deps on macOS
 ```
 
 ### Uses ideviceinfo from: https://github.com/libimobiledevice/libimobiledevice
@@ -24,11 +24,15 @@ optional arguments:
 
 ### macOS users need to install brew and libimobiledevice 
 
-#### Install brew:
+#### Automatically:
+
+- ``` python3 main.py -i ```
+
+#### Manually install brew.sh:
 
 - ``` /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" ```
 
-#### Install libimobiledevice:
+#### Manually install libimobiledevice:
 
 - ``` brew install libimobiledvice ```
 
