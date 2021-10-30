@@ -8,8 +8,9 @@ def main():
     if sys.platform == "win32":
         parser.add_argument("-s",  help="Set Custom Save Path for Downloaded Files", default=os.path.join(os.path.join(os.environ["USERPROFILE"]), "Desktop/" ))
     parser.add_argument("-b", help="Download files for signed Beta iOS versions", action="store_true")
-    parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files", action="store_true")
+    parser.add_argument("-d", help="Download SEP, Basband and BuildManifest.plist files from IPSW Bundles", action="store_true")
     parser.add_argument("-i", help="Install brew.sh and libimobiledevice deps on macOS", action="store_true")
+    parser.add_argument("-o", help="Download SEP, Basband and BuildManifest.plist files from OTA Bundles", action="store_true")
     args = parser.parse_args()
 
     if args.i:
@@ -58,11 +59,16 @@ def main():
             print("[D] ECID:", ecid)
             print("[D] Device Platform:", platform)
 
-            for i in tssUtils.signedVersionChecker(product, args.b):
-                for index, element in enumerate(tssUtils.ipswGrabber(product, i, args.b)):
-                    fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "%s/" %i)
-                    print("-- Performing BuildManifest Lookup for %s --" %product)
-                    utils.checkManifest(args.s + "%s/" %product + "%s/" %i + "BuildManifest.plist", product, boardid.lower(), element['url'], args.s + "%s/" %product + "%s/" %i)
+            for i in tssUtils.signedVersionChecker(product, args.b, args.o):
+                for index, element in enumerate(tssUtils.ipswGrabber(product, i, args.b, args.o)):
+                    if not args.o:
+                        fetch.downloadFileFromIPSW(element['url'], ["BuildManifest.plist"], args.s + "%s/" %product + "%s/" %i)
+                        print("-- Performing BuildManifest Lookup for %s --" %product)
+                        utils.checkManifest(args.s + "%s/" %product + "%s/" %i + "BuildManifest.plist", product, boardid.lower(), element['url'], args.s + "%s/" %product + "%s/" %i, False)
+                    else:
+                        fetch.downloadFileFromIPSW(element['url'], ["AssetData/boot/BuildManifest.plist"], args.s + "%s/" %product + "%s/" %i)
+                        print("-- Performing BuildManifest Lookup for %s --" %product)
+                        utils.checkManifest(args.s + "%s/" %product + "%s/" %i + "AssetData/boot/BuildManifest.plist", product, boardid.lower(), element['url'], args.s + "%s/" %product + "%s/" %i, True)
         except:
             print("Something went wrong, Connect Device again and run script again!")
             sys.exit(-1)

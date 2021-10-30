@@ -5,7 +5,11 @@ def openFolder(savePath):
     os.system('open ' + savePath)
     #subprocess.run(['explorer', os.path.realpath(args.path + 'SaveMe-Tickets/' + i['ecid'] + '/' + version + '/' )])
 
-def checkManifest(fileLocation, device, boardconfig, element, savePath):
+def checkManifest(fileLocation, device, boardconfig, element, savePath, isOTA):
+    otaPath = ""
+    if isOTA:
+        otaPath = "AssetData/boot/"
+
     fileName = os.path.expanduser(fileLocation)
     if os.path.exists(fileName):
         with open(fileName, 'rb') as f:
@@ -17,10 +21,10 @@ def checkManifest(fileLocation, device, boardconfig, element, savePath):
                     print("[Found] %s version in BuildManifest" %i['ProductMarketingVersion'])
                     print("[Found] %s boardconfig entry in BuildManifest" %i['Info']['DeviceClass'])
                     print("[Found] SEP at path:[%s] in BuildManifest" %i['Manifest']['SEP']['Info']['Path'])
-                    fetch.downloadFileFromIPSW(element, [i['Manifest']['SEP']['Info']['Path']], savePath)
+                    fetch.downloadFileFromIPSW(element, ["%s" %otaPath + "%s" %i['Manifest']['SEP']['Info']['Path']], savePath)
                     if 'iPhone' in device:
-                        print("[Found] Baseband at path:[%s] in BuildManifest" %i['Manifest']['BasebandFirmware']['Info']['Path'])
-                        fetch.downloadFileFromIPSW(element, [i['Manifest']['BasebandFirmware']['Info']['Path']], savePath)
+                        print("[Found] Baseband at path:[" + otaPath + "%s" %i['Manifest']['BasebandFirmware']['Info']['Path'] + "] in BuildManifest")
+                        fetch.downloadFileFromIPSW(element, ["%s" %otaPath + "%s" %i['Manifest']['BasebandFirmware']['Info']['Path']], savePath)
                     else:
                         print("[Warning] %s does not use Baseband for restores!" %device)
                     return

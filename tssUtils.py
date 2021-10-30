@@ -1,14 +1,19 @@
 import requests, subprocess, os, csv, utils
 
-def signedVersionChecker(model, isBeta):
+def signedVersionChecker(model, isBeta, dlType):
     URL = None
     ipsw = []
+
+    if dlType:
+        dlType = "ota"
+    else:
+        dlType = "ipsw"
 
     if isBeta:
         URL = "https://api.m1sta.xyz/betas/" + model
         print("\n[TSS BETA] Using:", URL)
     if not isBeta:
-        URL = "https://api.ipsw.me/v4/device/" + model + "?type=ipsw"
+        URL = "https://api.ipsw.me/v4/device/" + model + "?type=%s"%dlType
         print("\n[TSS] Using:", URL)
 
     req = requests.get(URL)
@@ -33,15 +38,20 @@ def signedVersionChecker(model, isBeta):
                     break
     return ipsw
      
-def ipswGrabber(model, version, isBeta):
+def ipswGrabber(model, version, isBeta, dlType):
     URL = None
     ipsw = []
+
+    if dlType:
+        dlType = "ota"
+    else:
+        dlType = "ipsw"
 
     if isBeta:
         URL = "https://api.m1sta.xyz/betas/" + model
         print("\n[TSS BETA] Using:", URL)
     else:
-        URL = "https://api.ipsw.me/v4/device/" + model + "?type=ipsw"
+        URL = "https://api.ipsw.me/v4/device/" + model + "?type=%s"%dlType
         print("\n[TSS] Using:", URL)
 
     req = requests.get(URL)
