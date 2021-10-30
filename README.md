@@ -2,7 +2,7 @@
 
 ### Supports macOS and Windows
 
-Downloads SEP, Baseband and BuildManifest automatically for signed iOS version's (including beta firmwares) for connected iDevice
+Downloads SEP, Baseband and BuildManifest automatically for signed iOS version's (including beta firmwares) for connected iDevice from both IPSW's and OTA Bundles
 
 ```
 FutureHelper: FutureRestore SEP, Baseband and BuildManifest.plist Downloader by Kasiimh1
@@ -10,8 +10,9 @@ optional arguments:
   -h, --help  show this help message and exit
   -s S        Set Custom Save Path for Downloaded Files
   -b          Download files for signed Beta iOS versions
-  -d          Download SEP, Baseband and BuildManifest.plist files
+  -d          Download SEP, Basband and BuildManifest.plist files from IPSW Bundles
   -i          Install brew.sh and libimobiledevice deps on macOS
+  -o          Download SEP, Basband and BuildManifest.plist files from OTA Bundles
 ```
 
 ### Uses ideviceinfo from: https://github.com/libimobiledevice/libimobiledevice
