@@ -10,9 +10,9 @@ optional arguments:
   -h, --help  show this help message and exit
   -s S        Set Custom Save Path for Downloaded Files
   -b          Download files for signed Beta iOS versions
-  -d          Download SEP, Basband and BuildManifest.plist files from IPSW Bundles
+  -d          Download SEP, Baseband and BuildManifest.plist files from IPSW Bundles
   -i          Install brew.sh and libimobiledevice deps on macOS
-  -o          Download SEP, Basband and BuildManifest.plist files from OTA Bundles
+  -o          Download SEP, Baseband and BuildManifest.plist files from OTA Bundles
 ```
 
 ### Uses ideviceinfo from: https://github.com/libimobiledevice/libimobiledevice
